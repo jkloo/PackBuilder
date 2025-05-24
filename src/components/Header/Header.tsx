@@ -15,8 +15,7 @@ export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
 
   return (
-      <Container size="md" className={classes.inner}>
-        
+      <Container size="lg" className={classes.inner}>
         <Title order={2}>
           <AppLogo size={28} />
           {"Drafter"}

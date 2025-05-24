@@ -12,6 +12,7 @@ export function Layout() {
         <AppShell
             header={{ height: 60 }}
             navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
+            aside={{ width: 100, breakpoint: 'sm' }}
             padding="md"
         >
         <AppShell.Header>
@@ -21,11 +22,7 @@ export function Layout() {
         <AppShell.Navbar py="md" px={4}>
         </AppShell.Navbar>
 
-        <AppShell.Main>
-            <Container>
-            <Outlet/>
-            </Container>
-        </AppShell.Main>
+        <Outlet/>
 
         <AppShell.Footer>
             <Footer/>

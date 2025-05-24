@@ -7,7 +7,7 @@ import classes from './Footer.module.css';
 export function Footer() {
   return (
     // <div className={classes.footer}>
-      <Container className={classes.inner}>
+      <Container size="lg" className={classes.inner}>
         <AppLogo size={28} />
         <Group gap={0} className={classes.links} justify="flex-end" wrap="nowrap">
           <ActionIcon size="lg" color="gray" variant="subtle">

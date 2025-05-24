@@ -1,7 +1,16 @@
-import { Title } from "@mantine/core";
+import { AppShell, Container, Title } from "@mantine/core";
 
 export function HomePage() {
   return (
-    <Title>Home</Title>
+    <>
+    <AppShell.Main>
+      <Container>
+      <Title>Home</Title>
+      </Container>
+    </AppShell.Main>
+    <AppShell.Aside>
+      Foo
+    </AppShell.Aside>
+    </>
   );
 }
