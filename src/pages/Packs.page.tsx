@@ -1,7 +1,7 @@
 import { Title } from "@mantine/core";
 
-export function HomePage() {
+export function Packs() {
   return (
-    <Title>Home</Title>
+    <Title>Hellooo</Title>
   );
 }
