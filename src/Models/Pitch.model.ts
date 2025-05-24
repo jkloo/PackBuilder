@@ -1,0 +1,1 @@
+export type PitchModel = ''|'1'|'2'|'3'

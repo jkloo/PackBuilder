@@ -1,7 +1,10 @@
+import { FoilingModel } from "./Foiling.model"
+import { PitchModel } from "./Pitch.model"
+
 export interface CardModel {
     unique_id: string
     name: string
-    pitch: string
+    pitch: PitchModel
     cost: string
     power: string
     defense: string
@@ -39,7 +42,7 @@ export interface CardModel {
     id: string
     set_id: string
     edition: string
-    foiling: string
+    foiling: FoilingModel
     rarity: string
     expansion_slot: boolean
     artists: string[]

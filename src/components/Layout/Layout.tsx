@@ -24,9 +24,9 @@ export function Layout() {
 
         <Outlet/>
 
-        <AppShell.Footer>
+        {/* <AppShell.Footer>
             <Footer/>
-        </AppShell.Footer>
+        </AppShell.Footer> */}
         
         </AppShell>
     )
