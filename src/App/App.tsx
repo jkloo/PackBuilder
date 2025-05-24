@@ -1,11 +1,12 @@
 import '@mantine/core/styles.css';
+import React from 'react';
 
 import { MantineProvider } from '@mantine/core';
-import { theme } from '../theme';
-import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import {  RouterProvider } from 'react-router';
 import { router } from '@/Router';
+
+import { theme } from '@/theme';
 
 export default function App() {
 

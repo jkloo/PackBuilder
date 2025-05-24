@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { HomePage } from './pages/Home.page';
 import { Packs } from './pages/Packs.page';
-import { Layout } from './Layout/Layout';
+import { Layout } from '@/components/Layout/Layout';
 
 export const router = createBrowserRouter([
   {

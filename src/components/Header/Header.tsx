@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { NavLink, useMatch } from 'react-router';
 import { Burger, Container, Group, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import classes from './HeaderSimple.module.css';
-import { AppLogo } from '../AppLogo/AppLogo';
-import { BrowserRouter, Link, NavLink, Router } from 'react-router';
+import { AppLogo } from '@/components/AppLogo/AppLogo';
+
+import classes from './Header.module.css';
 
 const links = [
   { link: '/', label: 'Home' },
   { link: '/packs', label: 'Packs' },
-  // { link: '/about', label: 'About' },
+  { link: '/about', label: 'About' },
 ];
 
-export function HeaderSimple() {
+export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
 
   return (

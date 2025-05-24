@@ -1,5 +1,5 @@
-import { FooterSocial } from "@/components/FooterSocial/FooterSocial";
-import { HeaderSimple } from "@/components/HeaderSimple/HeaderSimple";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { AppShell, Container } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet } from "react-router";
@@ -15,7 +15,7 @@ export function Layout() {
             padding="md"
         >
         <AppShell.Header>
-            <HeaderSimple/>
+            <Header/>
         </AppShell.Header>
 
         <AppShell.Navbar py="md" px={4}>
@@ -28,7 +28,7 @@ export function Layout() {
         </AppShell.Main>
 
         <AppShell.Footer>
-            <FooterSocial/>
+            <Footer/>
         </AppShell.Footer>
         
         </AppShell>
