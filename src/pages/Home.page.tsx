@@ -8,9 +8,6 @@ export function HomePage() {
       <Title>Home</Title>
       </Container>
     </AppShell.Main>
-    <AppShell.Aside>
-      Foo
-    </AppShell.Aside>
     </>
   );
 }

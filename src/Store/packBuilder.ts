@@ -13,13 +13,15 @@ export interface PackBuilderSlice {
   add(card: CardModel): void
   replace(index: number, card: CardModel): void
   remove(index: number): void
-  clearBuilder(): void
+  clearBuilder(excludeBoxId: boolean): void
 
   setBoxId(id?: string): void
   generateBoxId(): string
 
   setPackId(id?: PackModel['id']): void
   generatePackId(): PackModel['id']
+
+  editPack(id: PackModel['id']): void
 }
 
 export const useCardAlternatives = (card: CardModel, set: string): CardModel[] => {
@@ -35,7 +37,6 @@ export const usePackBuilderSlice: StateCreator<Store, [], [], PackBuilderSlice> 
   replace: (index: number, card: CardModel) => set((state) => {
     const packBuilderCards = [...state.packBuilderCards]
     packBuilderCards[index] = card
-    console.log(card.foiling, index)
     return { packBuilderCards }
   }),
   remove: (index: number) => set((state) => {
@@ -43,9 +44,9 @@ export const usePackBuilderSlice: StateCreator<Store, [], [], PackBuilderSlice> 
     packBuilderCards.splice(index, 1)
     return { packBuilderCards }
   }),
-  clearBuilder: () => set((state) => ({
+  clearBuilder: (excludeBoxId: boolean = true) => set((state) => ({
     packBuilderCards: [],
-    boxId: undefined,
+    boxId: excludeBoxId ? state.boxId : undefined,
     packId: undefined,
   })),
 
@@ -64,5 +65,14 @@ export const usePackBuilderSlice: StateCreator<Store, [], [], PackBuilderSlice> 
     const packId = generatePackId()
     set((state) => ({ packId }))
     return packId
-  }
+  },
+  editPack: (id: PackModel['id']) => set((state) => {
+    const pack = get().packDatabase.get(id)
+    if (!pack) { return {} }
+    return {
+      packBuilderCards: pack.cards,
+      boxId: pack.boxId,
+      packId: pack.id,
+    }
+  }),
 })

@@ -4,6 +4,7 @@ import { useAppStore } from "@/Store/store";
 import { AppShell, Button, Container, Group, Input, Stack, Text, Title, Tooltip } from "@mantine/core";
 import { IconBox, IconCards } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 export function PackBuilder() { 
   const packCards = useAppStore((state) => state.packBuilderCards)
@@ -108,6 +109,8 @@ export function PackBuilderToolbar() {
   const setPackId = useAppStore((state) => state.setPackId)
 
   const savePack = useAppStore((state) => state.upsert)
+
+  const navigate = useNavigate()
   
   useEffect(() => {
     const valid = [
@@ -118,11 +121,15 @@ export function PackBuilderToolbar() {
   }, [packCards])
   
   const handleSave = () => {
+    console.log('Presave Box ID -', boxId)
     savePack(packCards, { packId, boxId })
+    clear(false)
+    if (packId) { navigate(-1) }
   }
   
   const handleCancel = () => {
-    clear()
+    clear(true)
+    navigate(-1)
   }
 
   return (

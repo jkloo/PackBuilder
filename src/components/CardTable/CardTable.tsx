@@ -1,7 +1,4 @@
-import { useState } from 'react';
-import cx from 'clsx';
-import { Button, Checkbox, Group, HoverCard, Image, Menu, Popover, ScrollArea, Stack, Table, Text, UnstyledButton } from '@mantine/core';
-import classes from './CardTable.module.css';
+import { Button, Group, Image, Menu, Popover, ScrollArea, Stack, Table, Text } from '@mantine/core';
 import { CardModel } from '@/Models/Card.model';
 import { PitchIndicator } from '@/components/PitchIndicator/PitchIndicator';
 import { FoilingIndicator } from '../FoilingIndicator/FoilingIndicator';
@@ -9,7 +6,7 @@ import { useCardAlternatives } from '@/Store/packBuilder';
 import { useAppStore } from '@/Store/store';
 import { RarityIndicator } from '../RarityIndicator/RarityIndicator';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronCompactDown, IconChevronDown, IconTrash } from '@tabler/icons-react';
+import { IconChevronDown, IconTrash } from '@tabler/icons-react';
 
 const keyForCard = (card: CardModel, index: number) => (`${index}-${card.printing_unique_id}`)
 
@@ -64,9 +61,9 @@ export function CardTable({cards}: {cards:CardModel[]}) {
         key={keyForCard(item, index)}
         // className={cx({ [classes.rowSelected]: selected })}
       >
-        {/* <Table.Td>
-          <Checkbox checked={selection.includes(keyForCard(item, index))} onChange={() => toggleRow(keyForCard(item, index))} />
-        </Table.Td> */}
+        <Table.Td>
+          <Text>{index + 1}</Text>
+        </Table.Td>
         <Table.Td>
           <ImagePopover card={item}/>          
         </Table.Td>
@@ -101,13 +98,7 @@ export function CardTable({cards}: {cards:CardModel[]}) {
       <Table miw={640} verticalSpacing="sm">
         <Table.Thead>
           <Table.Tr>
-            {/* <Table.Th w={40}>
-              <Checkbox
-                onChange={toggleAll}
-                checked={selection.length === cards.length}
-                indeterminate={selection.length > 0 && selection.length !== cards.length}
-              />
-            </Table.Th> */}
+            <Table.Th></Table.Th>
             <Table.Th>Image</Table.Th>
             <Table.Th>Pitch</Table.Th>
             <Table.Th>Name</Table.Th>

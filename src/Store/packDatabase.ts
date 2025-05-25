@@ -17,6 +17,7 @@ export const usePackDatabaseSlice: StateCreator<Store, [], [], PackDatabaseSlice
     if (!boxId) {
       boxId = generateBoxId()
       get().setBoxId(boxId)
+      console.log(boxId)
     }
     if (!packId) {
       packId = generatePackId()

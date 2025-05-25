@@ -68,54 +68,13 @@ export function CardSearch({set, includeExpansionSlot=false, onSelect}: CardSear
     </Combobox.Option>
   ));
 
-  return (
-    <Group align="flex-end">
-      <Combobox
-        store={combobox}
-        withinPortal={false}
-        onOptionSubmit={(val, props) => {
-          setValue('');
-          setSearch('');
-          combobox.closeDropdown();
-          combobox.resetSelectedOption();
-
-          const card = cardLookup.get(val)
-          if(card) { onSelect(card) }
-        }}
-      >
-        <Combobox.Target>
-          <InputBase
-            flex={1}
-            rightSection={<Combobox.Chevron />}
-            value={search}
-            onChange={(event) => {
-              combobox.openDropdown();
-              combobox.updateSelectedOptionIndex();
-              setSearch(event.currentTarget.value);
-            }}
-            // onClick={() => combobox.openDropdown()}
-            // onFocus={() => combobox.openDropdown()}
-            onBlur={() => {
-              combobox.closeDropdown();
-            }}
-            label="Search"
-            placeholder="Search for a card"
-            rightSectionPointerEvents="none"
-          />
-        </Combobox.Target>
-
-        <Combobox.Dropdown>
-          <Combobox.Options>
-            {options.length > 0 ? options : <Combobox.Empty>Nothing found</Combobox.Empty>}
-          </Combobox.Options>
-        </Combobox.Dropdown>
-      </Combobox>
-    
+  function Settings() {
+    return (
       <HoverCard>
         <HoverCard.Target>
-            <ActionIcon variant="filled" aria-label="Settings" size='lg'>
-               <IconAdjustments stroke={1.5} />
-            </ActionIcon>
+          <ActionIcon variant='subtle' aria-label="Settings" size='lg'>
+            <IconAdjustments stroke={1.5} />
+          </ActionIcon>
         </HoverCard.Target>
         <HoverCard.Dropdown>
           <Stack justify="flex-start">
@@ -138,6 +97,51 @@ export function CardSearch({set, includeExpansionSlot=false, onSelect}: CardSear
           </Stack>
         </HoverCard.Dropdown>
       </HoverCard>
+    )
+  }
+
+  return (
+    <Group align="flex-end">
+      <Combobox
+        store={combobox}
+        withinPortal={false}
+        onOptionSubmit={(val, props) => {
+          setValue('');
+          setSearch('');
+          combobox.closeDropdown();
+          combobox.resetSelectedOption();
+
+          const card = cardLookup.get(val)
+          if(card) { onSelect(card) }
+        }}
+      >
+        <Combobox.Target>
+          <InputBase
+            size="xl"
+            flex={1}
+            rightSection={<Settings />}
+            value={search}
+            onChange={(event) => {
+              combobox.openDropdown();
+              combobox.updateSelectedOptionIndex();
+              setSearch(event.currentTarget.value);
+            }}
+            // onClick={() => combobox.openDropdown()}
+            // onFocus={() => combobox.openDropdown()}
+            onBlur={() => {
+              combobox.closeDropdown();
+            }}
+            label="Search"
+            placeholder="Search for a card"
+          />
+        </Combobox.Target>
+
+        <Combobox.Dropdown>
+          <Combobox.Options>
+            {options.length > 0 ? options : <Combobox.Empty>Nothing found</Combobox.Empty>}
+          </Combobox.Options>
+        </Combobox.Dropdown>
+      </Combobox>
     </Group>
   );
 }
