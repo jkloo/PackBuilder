@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import { HomePage } from './pages/Home.page';
-import { Packs } from './pages/Packs.page';
+import { PackBuilder } from './pages/PackBuilder.page';
 import { Layout } from '@/components/Layout/Layout';
 
 export const router = createBrowserRouter([
@@ -13,7 +13,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/packs',
-        element: <Packs />,
+        element: <PackBuilder />,
       },
     ],
   },

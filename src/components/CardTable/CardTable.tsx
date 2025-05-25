@@ -131,7 +131,7 @@ function ImagePopover({card}: {card: CardModel}) {
       <Popover.Target>
         <Image src={card.image_url} w={50} h={70} fit="contain" onMouseEnter={open} onMouseLeave={close}/>
       </Popover.Target>
-      <Popover.Dropdown style={{ pointerEvents: 'none' }}>
+      <Popover.Dropdown p={0} style={{ pointerEvents: 'none' }}>
         <Image src={card.image_url} fit="contain"/>
       </Popover.Dropdown>
     </Popover>
