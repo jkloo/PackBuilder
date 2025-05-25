@@ -25,7 +25,7 @@ export const router = createBrowserRouter([
           const setPackId = useAppStore((state) => state.setPackId)
           
           useEffect(() => {
-            clear()
+            clear(false)
             setPackId(undefined)
           })
           return (
