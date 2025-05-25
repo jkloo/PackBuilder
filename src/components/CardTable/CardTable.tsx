@@ -9,7 +9,7 @@ import { useCardAlternatives } from '@/Store/packBuilder';
 import { useAppStore } from '@/Store/store';
 import { RarityIndicator } from '../RarityIndicator/RarityIndicator';
 import { useDisclosure } from '@mantine/hooks';
-import { IconTrash } from '@tabler/icons-react';
+import { IconChevronCompactDown, IconChevronDown, IconTrash } from '@tabler/icons-react';
 
 const keyForCard = (card: CardModel, index: number) => (`${index}-${card.printing_unique_id}`)
 
@@ -25,9 +25,12 @@ export function CardAlternativesSelector({card, onSelect}: Props) {
   return (
     <Menu>
       <Menu.Target>
-        <UnstyledButton>
-          <FoilingIndicator foiling={card.foiling}/>
-        </UnstyledButton>
+        <Button variant='default' p="xs">
+          <Group gap="sm">
+            <FoilingIndicator foiling={card.foiling}/>
+            <IconChevronDown stroke={1.5}/>
+          </Group>
+        </Button>
       </Menu.Target>
       <Menu.Dropdown>
         {
@@ -43,9 +46,9 @@ export function CardAlternativesSelector({card, onSelect}: Props) {
 }
 
 export function CardTable({cards}: {cards:CardModel[]}) {
-  const [selection, setSelection] = useState([] as string[]);
-  const toggleRow = (id: string) => setSelection((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id] );
-  const toggleAll = () => setSelection((current) => (current.length === cards.length ? [] : cards.map((item) => item.printing_unique_id)));
+  // const [selection, setSelection] = useState([] as string[]);
+  // const toggleRow = (id: string) => setSelection((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id] );
+  // const toggleAll = () => setSelection((current) => (current.length === cards.length ? [] : cards.map((item) => item.printing_unique_id)));
 
   const replace = useAppStore((state) => state.replace)
   const remove = useAppStore((state) => state.remove)
@@ -55,12 +58,15 @@ export function CardTable({cards}: {cards:CardModel[]}) {
   }
 
   const rows = cards.map((item, index) => {
-    const selected = selection.includes(keyForCard(item, index));
+    // const selected = selection.includes(keyForCard(item, index));
     return (
-      <Table.Tr key={keyForCard(item, index)} className={cx({ [classes.rowSelected]: selected })}>
-        <Table.Td>
+      <Table.Tr
+        key={keyForCard(item, index)}
+        // className={cx({ [classes.rowSelected]: selected })}
+      >
+        {/* <Table.Td>
           <Checkbox checked={selection.includes(keyForCard(item, index))} onChange={() => toggleRow(keyForCard(item, index))} />
-        </Table.Td>
+        </Table.Td> */}
         <Table.Td>
           <ImagePopover card={item}/>          
         </Table.Td>
@@ -95,13 +101,13 @@ export function CardTable({cards}: {cards:CardModel[]}) {
       <Table miw={640} verticalSpacing="sm">
         <Table.Thead>
           <Table.Tr>
-            <Table.Th w={40}>
+            {/* <Table.Th w={40}>
               <Checkbox
                 onChange={toggleAll}
                 checked={selection.length === cards.length}
                 indeterminate={selection.length > 0 && selection.length !== cards.length}
               />
-            </Table.Th>
+            </Table.Th> */}
             <Table.Th>Image</Table.Th>
             <Table.Th>Pitch</Table.Th>
             <Table.Th>Name</Table.Th>

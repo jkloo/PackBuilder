@@ -8,6 +8,7 @@ export interface PackBuilderSlice {
   add(card: CardModel): void
   replace(index: number, card: CardModel): void
   remove(index: number): void
+  clear(): void
 }
 
 export const useCardAlternatives = (card: CardModel, set: string): CardModel[] => {
@@ -28,5 +29,8 @@ export const usePackBuilderSlice: StateCreator<Store, [], [], PackBuilderSlice> 
     const packBuilderCards = [...state.packBuilderCards]
     packBuilderCards.splice(index, 1)
     return { packBuilderCards }
-  })
+  }),
+  clear: () => set((state) => ({
+    packBuilderCards: []
+  })),
 })
