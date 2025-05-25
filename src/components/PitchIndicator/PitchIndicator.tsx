@@ -1,5 +1,5 @@
 import { PitchModel } from "@/Models/Pitch.model"
-import { ColorSwatch } from "@mantine/core"
+import { ColorSwatch, Text } from "@mantine/core"
 
 
 interface PitchIndicatorProps {
@@ -32,7 +32,7 @@ export function PitchIndicator({pitch}: PitchIndicatorProps) {
         color={colorForPitch(pitch)}
         style={{ color: textColorForPitch(pitch) }}
     >
-      {pitch}
+      <Text fw="700">{pitch}</Text>
     </ColorSwatch>
     )
 }

@@ -1,5 +1,6 @@
 import { FoilingModel } from "./Foiling.model"
 import { PitchModel } from "./Pitch.model"
+import { RarityModel } from "./Rarity.model"
 
 export interface CardModel {
     unique_id: string
@@ -43,7 +44,7 @@ export interface CardModel {
     set_id: string
     edition: string
     foiling: FoilingModel
-    rarity: string
+    rarity: RarityModel
     expansion_slot: boolean
     artists: string[]
     art_variations: string[]
