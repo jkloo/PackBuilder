@@ -1,5 +1,5 @@
 import { CardModel } from "@/Models/Card.model";
-import { useCombobox, Combobox, Group, Stack, InputBase, Text, Flex, Select, Switch, Paper, Button, HoverCard, ActionIcon } from "@mantine/core";
+import { useCombobox, Combobox, Group, Stack, InputBase, Text, Flex, Select, Switch, Paper, Button, HoverCard, ActionIcon, Title, Divider, Space } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useAppStore } from "@/Store/store";
 import { FoilingIndicator } from "../FoilingIndicator/FoilingIndicator";
@@ -78,13 +78,19 @@ export function CardSearch({set, includeExpansionSlot=false, onSelect}: CardSear
         </HoverCard.Target>
         <HoverCard.Dropdown>
           <Stack justify="flex-start">
-            <Select
-              label="Set"
-              placeholder="Pick value"
-              data={['SEA']}
-              value={'SEA'}
-              readOnly
-            />
+            <Group justify="space-between">
+              <Text>Set</Text>
+              <Space w='xl' />
+              <Select
+                placeholder="Pick value"
+                data={['SEA']}
+                value={'SEA'}
+                readOnly
+                w={120}
+              />
+            </Group>
+
+            <Divider/>
 
             <Group justify="space-between">
               <Text>Include foils</Text>
@@ -101,7 +107,8 @@ export function CardSearch({set, includeExpansionSlot=false, onSelect}: CardSear
   }
 
   return (
-    <Group align="flex-end">
+    <Stack align="stretch">
+      <Title size='h2'>Search</Title>
       <Combobox
         store={combobox}
         withinPortal={false}
@@ -117,8 +124,9 @@ export function CardSearch({set, includeExpansionSlot=false, onSelect}: CardSear
       >
         <Combobox.Target>
           <InputBase
+            variant='filled'
             size="xl"
-            flex={1}
+            radius='md'
             rightSection={<Settings />}
             value={search}
             onChange={(event) => {
@@ -126,12 +134,9 @@ export function CardSearch({set, includeExpansionSlot=false, onSelect}: CardSear
               combobox.updateSelectedOptionIndex();
               setSearch(event.currentTarget.value);
             }}
-            // onClick={() => combobox.openDropdown()}
-            // onFocus={() => combobox.openDropdown()}
             onBlur={() => {
               combobox.closeDropdown();
             }}
-            label="Search"
             placeholder="Search for a card"
           />
         </Combobox.Target>
@@ -142,6 +147,6 @@ export function CardSearch({set, includeExpansionSlot=false, onSelect}: CardSear
           </Combobox.Options>
         </Combobox.Dropdown>
       </Combobox>
-    </Group>
+    </Stack>
   );
 }
