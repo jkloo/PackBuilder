@@ -1,8 +1,8 @@
 import { CardSearch } from "@/components/CardSearch/CardSearch";
 import { CardTable } from "@/components/CardTable/CardTable";
 import { useAppStore } from "@/Store/store";
-import { AppShell, Button, Container, Group, Input, Stack, Text, Title, Tooltip } from "@mantine/core";
-import { IconBox, IconCards } from "@tabler/icons-react";
+import { AppShell, Button, Container, Group, Input, List, Stack, Text, Title, Tooltip } from "@mantine/core";
+import { IconBox, IconCards, IconCircle, IconCircleCheckFilled } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -98,6 +98,7 @@ function PackInput({value, setValue}: { value?: string, setValue(value?: string)
 
 export function PackBuilderToolbar() {
   const [saveDisabled, setSaveDisabled] = useState(false)
+  const [validations, setValidations] = useState([false, false, false])
 
   const clear = useAppStore((state) => state.clearBuilder)
   const packCards = useAppStore((state) => state.packBuilderCards)
@@ -115,10 +116,15 @@ export function PackBuilderToolbar() {
   useEffect(() => {
     const valid = [
       packCards.length == 14,
-      packCards.filter((c) => c.foiling == 'R').length == 1
-    ].every(Boolean)
-    setSaveDisabled(!valid)
+      packCards.filter((c) => c.foiling == 'R').length == 1,
+      packCards.filter((c) => ['R', 'M'].includes(c.rarity) && c.foiling =='S').length == 2
+    ]
+    setValidations(valid)
   }, [packCards])
+
+  useEffect(() => {
+    setSaveDisabled(!validations.every(Boolean))
+  }, [validations])
   
   const handleSave = () => {
     console.log('Presave Box ID -', boxId)
@@ -132,6 +138,14 @@ export function PackBuilderToolbar() {
     navigate(-1)
   }
 
+  const requirementIcon = (satisfied: boolean) => {
+    return (
+      satisfied
+        ? <IconCircleCheckFilled color="var(--mantine-color-green-text)" size={20}/>
+        : <IconCircle size={20}/>
+    )
+  }
+
   return (
     <Group justify="space-between">
       <Group>
@@ -140,15 +154,26 @@ export function PackBuilderToolbar() {
       </Group>
       <Group>
         <Tooltip color="gray"
-          label='A pack requires 14 cards and one rainbow foil.'
+          label={
+            <Stack gap={4}>
+              <Text fw={600} size="xs" c="gray">Pack requirements</Text>
+            <List size="sm">
+              <List.Item icon={requirementIcon(validations[0])}>14 cards</List.Item>
+              <List.Item icon={requirementIcon(validations[1])}>1 Rainbow foil</List.Item>  
+              <List.Item icon={requirementIcon(validations[2])}>2 Rare+</List.Item>  
+            </List>
+            </Stack>
+          }
           disabled={!saveDisabled}
           multiline
           w={220}
         >
           <Button disabled={saveDisabled} onClick={handleSave}>Save</Button>
+
         </Tooltip>
         <Button variant="default" color="red" onClick={handleCancel}>Cancel</Button>
       </Group>
     </Group>
   )
 }
+

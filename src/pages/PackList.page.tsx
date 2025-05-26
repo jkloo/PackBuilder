@@ -1,11 +1,8 @@
-import { CardAlternativesSelector } from "@/components/CardTable/CardTable";
-import { PitchIndicator } from "@/components/PitchIndicator/PitchIndicator";
-import { RarityIndicator } from "@/components/RarityIndicator/RarityIndicator";
 import { PackModel } from "@/Models/Pack.model";
 import { useAppStore } from "@/Store/store";
-import { AppShell, Button, Container, Group, ScrollArea, Stack, Table, Title, Text, Space } from "@mantine/core";
+import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space } from "@mantine/core";
 import { IconDownload, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
-import { NavLink, replace, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 export function PackList() {
 
