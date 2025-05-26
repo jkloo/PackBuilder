@@ -7,6 +7,7 @@ import {  RouterProvider } from 'react-router';
 import { router } from '@/Router';
 
 import { theme } from '@/theme';
+import '@mantine/charts/styles.css';
 
 export default function App() {
 

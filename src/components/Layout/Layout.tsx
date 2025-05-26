@@ -12,7 +12,7 @@ export function Layout() {
         <AppShell
             header={{ height: 60 }}
             navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
-            aside={{ width: 100, breakpoint: 'sm' }}
+            aside={{ width: 300, breakpoint: 'md', collapsed: { desktop: false, mobile: true } }}
             padding="md"
         >
         <AppShell.Header>

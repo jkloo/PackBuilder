@@ -15,3 +15,19 @@ export const nameForRarity = (rarity: RarityModel): string => {
     default: return ''
   }
 }
+
+export const orderForRarity = (rarity: RarityModel): number => {
+  switch(rarity) {
+    case 'C': return 0
+    case 'R': return 1
+    case 'S': return 2
+    case 'M': return 2
+    case 'L': return 3
+    case 'F': return 10
+    case 'T': return 5
+    case 'B': return 5
+    case 'V': return 6
+    case 'P': return 12
+    default: return -1
+  }
+}

@@ -1,7 +1,7 @@
 import { CardSearch } from "@/components/CardSearch/CardSearch";
 import { CardTable } from "@/components/CardTable/CardTable";
 import { useAppStore } from "@/Store/store";
-import { AppShell, Button, Container, Group, Input, List, Stack, Text, Title, Tooltip } from "@mantine/core";
+import { AppShell, Button, Container, Group, Input, List, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
 import { IconBox, IconCards, IconCircle, IconCircleCheckFilled } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -42,7 +42,7 @@ function BoxInput({value, setValue}: { value?: string, setValue(value?: string):
       w={240}
       position="bottom"
     >
-    <Input
+    <TextInput
       placeholder="Box ID"
       value={value}
       onChange={(event) => setValue(event.currentTarget.value)}
@@ -76,7 +76,7 @@ function PackInput({value, setValue}: { value?: string, setValue(value?: string)
       w={240}
       position="bottom"
     >
-      <Input
+      <TextInput
         placeholder="Pack ID"
         value={value}
         onChange={(event) => setValue(event.currentTarget.value)}
