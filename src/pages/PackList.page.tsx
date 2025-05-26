@@ -1,14 +1,13 @@
 import { PackModel } from "@/Models/Pack.model";
 import { useAppStore } from "@/Store/store";
 import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space } from "@mantine/core";
-import { IconDownload, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconBox, IconCards, IconDownload, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
-export function PackList() {
+export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: string}) {
 
   const navigate = useNavigate()
 
-  const packs = useAppStore((state) => state.packDatabase)
   const deletePack = useAppStore((state) => state.delete)
 
   const handleDelete = (pack: PackModel) => {
@@ -40,13 +39,27 @@ export function PackList() {
     })
   }
 
-  const rows = packs.values().map((pack, index) => {
-    // const selected = selection.includes(keyForCard(item, index));
+  const rows = packs.map((pack, index) => {
     return (
       <Table.Tr key={pack.id}>
         <Table.Td>{pack.cards.length}</Table.Td>
-        <Table.Td>{pack.boxId}</Table.Td>
-        <Table.Td>{pack.id}</Table.Td>
+        <Table.Td>
+          <Button onClick={() => navigate(`/packs/${pack.id}`)} variant='default'>
+            <Group gap="sm" >
+              <IconCards size={16}/>
+              <Text>{pack.id}</Text>
+            </Group>
+          </Button>
+        </Table.Td>
+        <Table.Td>
+          <Button disabled={!!boxId} onClick={() => navigate(`/boxes/${pack.boxId}`)} variant='default'>
+            <Group gap="sm" >
+              <IconBox size={16}/>
+              <Text>{pack.boxId}</Text>
+            </Group>
+          </Button>
+          
+        </Table.Td>
         <Table.Td>
           <Group justify='right'>
             <Button variant="light" color="red" onClick={() => handleDelete(pack)}>
@@ -66,7 +79,7 @@ export function PackList() {
     <>
     <AppShell.Main>
       <Container>
-        <Title>Packs</Title>
+        <Title>{boxId ? `Packs in Box (${boxId})` : 'Packs' }</Title>
         <Group justify="flex-end">
           <Button onClick={() => handleDownload()} variant='outline'>
             <Group gap='xs'>
@@ -74,7 +87,7 @@ export function PackList() {
               <Text>Download</Text>
             </Group>
           </Button>
-          <Button onClick={() => navigate('/packs/new')}>
+          <Button onClick={() => navigate(boxId ? `/packs/new?boxId=${boxId}` : '/packs/new')}>
             <Group gap='xs'>
               <IconPlus size={16}/>
               <Text>New</Text>
@@ -87,8 +100,8 @@ export function PackList() {
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Card Count</Table.Th>
-                <Table.Th>Box Id</Table.Th>
                 <Table.Th>Pack Id</Table.Th>
+                <Table.Th>Box Id</Table.Th>
                 <Table.Th></Table.Th>
               </Table.Tr>
             </Table.Thead>
