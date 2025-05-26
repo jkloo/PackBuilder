@@ -1,5 +1,5 @@
 import { PackModel } from "@/Models/Pack.model"
-import { AppShell, Button, Container, Grid, Group, Image, Input, Stack, Title, Text, Textarea, TextInput, Center, ColorSwatch, Paper, Divider } from "@mantine/core"
+import { AppShell, Button, Container, Grid, Group, Image, Input, Stack, Title, Text, Textarea, TextInput, Center, ColorSwatch, Paper, Divider, ScrollArea } from "@mantine/core"
 import { IconCards, IconEdit } from "@tabler/icons-react"
 
 import classes from './PackDetail.module.css'
@@ -8,6 +8,7 @@ import { orderForFoiling } from "@/Models/Foiling.model"
 import { useNavigate } from "react-router"
 import { CardModel } from "@/Models/Card.model"
 import { DonutChart, PieChart } from '@mantine/charts';
+import { Pie } from "recharts"
 
 export function PackDetail({pack}: {pack: PackModel}) {
 
@@ -56,16 +57,15 @@ export function PackDetail({pack}: {pack: PackModel}) {
         </Stack>
       </Container>
     </AppShell.Main>
-    <AppShell.Aside p='md'>
-      <Stack>
-
-      <Title order={2}>Stats</Title>
-      
-      <PackStats pack={pack}/>
-      {/* <Title order={2}>About</Title>
-      <Textarea label="Notes" placeholder="Record anything here."></Textarea>
-      <Textarea label="Source" placeholder="Where this pack came from."></Textarea> */}
-      </Stack>
+    <AppShell.Aside>
+      <Paper p='md' withBorder radius={0}>
+        <Title order={2}>Stats</Title>
+      </Paper>
+      <ScrollArea>
+        <Stack p='md'>
+          <PackStats pack={pack}/>
+        </Stack>
+      </ScrollArea>
     </AppShell.Aside>
     </>
   )
@@ -113,15 +113,24 @@ function PackStats({pack}: { pack: PackModel }) {
     { value: counts.necromancer, color: 'var(--mantine-color-teal-5)', name: 'Necromancer' },
   ]
 
+  const breakdown = [
+    { value: counts.equipment, color: 'var(--mantine-color-gray-5)', name: 'Equipment' },
+    { value: counts.generic + counts.pirate, color: 'var(--mantine-color-yellow-3)', name: 'Generic + Pirate' },
+    { value: counts.ranger + counts.mechanologist + counts.necromancer, color: 'var(--mantine-color-cyan-5)', name: 'Classes' },
+  ]
+
   return (
-      <Stack>
-        <Center>
-      <DonutChart
-        chartLabel="Commons"
-        withTooltip={false}
-        size={160}
-        data={data}
-      />
+    <Stack>
+      <Title order={3}>Commons</Title>
+      <Center>
+        <PieChart
+          startAngle={0}
+          endAngle={180}
+          withTooltip={false}
+          size={200}
+          data={data.toReversed()}
+          mb={-80}
+        />
       </Center>
       <Paper withBorder>
         {
@@ -129,7 +138,9 @@ function PackStats({pack}: { pack: PackModel }) {
             <>
             <Group p='sm' justify="space-between" w='100%'>
               <Group >
-              <ColorSwatch color={d.color}/>
+              <ColorSwatch color={d.color}>
+                <Text c='black'>{d.name[0]}</Text>
+              </ColorSwatch>
               <Text>{d.name}</Text>
               </Group>
               <Text size="lg" fw={600}>{d.value}</Text>
@@ -139,7 +150,29 @@ function PackStats({pack}: { pack: PackModel }) {
           ))
         }
       </Paper>
-      </Stack>
+      <Title order={3}>Pack Structure</Title>
+      <Center>
+        <PieChart data={breakdown} />
+      </Center>
+        <Paper withBorder>
+        {
+          breakdown.map((d) => (
+            <>
+            <Group p='sm' justify="space-between" w='100%'>
+              <Group >
+              <ColorSwatch color={d.color}>
+                <Text c='black'>{d.name[0]}</Text>
+              </ColorSwatch>
+              <Text>{d.name}</Text>
+              </Group>
+              <Text size="lg" fw={600}>{d.value}</Text>
+            </Group>
+            <Divider />
+            </>
+          ))
+        }
+        </Paper>
+    </Stack>
   )
 }
 
