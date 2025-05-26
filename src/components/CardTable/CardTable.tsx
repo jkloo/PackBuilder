@@ -7,6 +7,7 @@ import { useAppStore } from '@/Store/store';
 import { RarityIndicator } from '../RarityIndicator/RarityIndicator';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconTrash } from '@tabler/icons-react';
+import { CardImage } from '../CardImage/CardImage';
 
 const keyForCard = (card: CardModel, index: number) => (`${index}-${card.printing_unique_id}`)
 
@@ -113,17 +114,27 @@ export function CardTable({cards}: {cards:CardModel[]}) {
   );
 }
 
-
 function ImagePopover({card}: {card: CardModel}) {
   const [opened, { close, open }] = useDisclosure(false);
 
   return (
     <Popover width={480} position="right" withArrow shadow="md" opened={opened}>
       <Popover.Target>
-        <Image src={card.image_url} w={50} h={70} fit="contain" onMouseEnter={open} onMouseLeave={close}/>
+        <CardImage
+            w={50}
+            onMouseEnter={open}
+            onMouseLeave={close}
+            card={card}
+          />
       </Popover.Target>
       <Popover.Dropdown p={0} style={{ pointerEvents: 'none' }}>
-        <Image src={card.image_url} fit="contain"/>
+        <CardImage
+            thickBorder
+            onMouseEnter={open}
+            onMouseLeave={close}
+            card={card}
+          />
+        {/* <Image src={card.image_url} fit="contain"/> */}
       </Popover.Dropdown>
     </Popover>
   )

@@ -1,6 +1,8 @@
+import { PackBreakdownChart, PackBreakdownTable, PackCommonsChart, PackCommonsTable } from "@/components/Stats/Stats";
 import { PackModel } from "@/Models/Pack.model";
+import { computeAverages } from "@/Models/PackStats.model";
 import { useAppStore } from "@/Store/store";
-import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space } from "@mantine/core";
+import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space, Stack, Center, Paper } from "@mantine/core";
 import { IconBox, IconCards, IconDownload, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
@@ -74,7 +76,6 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
     );
   });
 
-
   return (
     <>
     <AppShell.Main>
@@ -110,6 +111,39 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
         </ScrollArea>
       </Container>
     </AppShell.Main>
+
+    <AppShell.Aside>
+      <Paper p='md' withBorder radius={0}>
+        <Title order={2}>Commons (Average)</Title>
+      </Paper>
+      <ScrollArea>
+        <Stack p='md'>
+          <StatsSection packs={packs}/>
+          <Space h='xl'/>
+        </Stack>
+      </ScrollArea>
+    </AppShell.Aside>
     </>
   );
+}
+
+function StatsSection({packs}:{packs: PackModel[]}) {
+  const averages = computeAverages(packs.map((p) => p.cards))
+
+  return (
+    <>
+    <Stack>
+      <Title order={3}>By Class</Title>
+      <Center>
+        <PackCommonsChart stats={averages} />
+      </Center>
+      <PackCommonsTable stats={averages} />
+      <Title order={3}>Pack Structure</Title>
+      <Center>
+        <PackBreakdownChart stats={averages} />
+      </Center>
+      <PackBreakdownTable stats={averages} />
+    </Stack>
+    </>
+  )
 }

@@ -1,14 +1,15 @@
 import { PackModel } from "@/Models/Pack.model"
-import { AppShell, Button, Container, Grid, Group, Image, Input, Stack, Title, Text, Textarea, TextInput, Center, ColorSwatch, Paper, Divider, ScrollArea } from "@mantine/core"
+import { AppShell, Button, Container, Grid, Group, Stack, Title, Text, TextInput, Center, ColorSwatch, Paper, Divider, ScrollArea, Space } from "@mantine/core"
 import { IconCards, IconEdit } from "@tabler/icons-react"
 
-import classes from './PackDetail.module.css'
 import { orderForRarity } from "@/Models/Rarity.model"
 import { orderForFoiling } from "@/Models/Foiling.model"
 import { useNavigate } from "react-router"
-import { CardModel } from "@/Models/Card.model"
-import { DonutChart, PieChart } from '@mantine/charts';
-import { Pie } from "recharts"
+import { PieChart } from '@mantine/charts';
+import { CardImage } from "@/components/CardImage/CardImage"
+import { computeAverages, computeStats } from "@/Models/PackStats.model"
+import { PackBreakdownChart, PackBreakdownTable, PackCommonsChart, PackCommonsTable } from "@/components/Stats/Stats"
+
 
 export function PackDetail({pack}: {pack: PackModel}) {
 
@@ -45,12 +46,8 @@ export function PackDetail({pack}: {pack: PackModel}) {
           </Group>
           <Grid columns={5}>
             { cards.map((card, index) => (
-              <Grid.Col span={1}>
-                <Image
-                  fit='contain'
-                  key={`${card.printing_unique_id}-${index}`} src={card.image_url}
-                  className={card.foiling == 'R' ? classes.rainbowBox : undefined}
-                /> 
+              <Grid.Col span={1} key={`${card.printing_unique_id}-${index}`}>
+                <CardImage card={card}/>
               </Grid.Col>
             ))}
           </Grid>
@@ -59,7 +56,7 @@ export function PackDetail({pack}: {pack: PackModel}) {
     </AppShell.Main>
     <AppShell.Aside>
       <Paper p='md' withBorder radius={0}>
-        <Title order={2}>Stats</Title>
+        <Title order={2}>Commons</Title>
       </Paper>
       <ScrollArea>
         <Stack p='md'>
@@ -72,106 +69,22 @@ export function PackDetail({pack}: {pack: PackModel}) {
 }
 
 function PackStats({pack}: { pack: PackModel }) {
-  const counts = pack.cards.reduce((acc, card) => {
-    const Common = (c: CardModel) => (c.rarity == 'C' && c.foiling == 'S')
-    const Equipment = (c: CardModel) => (c.types.includes('Equipment'))
-    const NonEquipment = (c: CardModel) => (!Equipment(c))
-    const Generic = (c: CardModel) => (c.types.includes('Generic'))
-    const Mechanologist = (c: CardModel) => (c.types.includes('Mechanologist'))
-    const Ranger = (c: CardModel) => (c.types.includes('Ranger'))
-    const Necromancer = (c: CardModel) => (c.types.includes('Necromancer'))
-    const Pirate = (c: CardModel) => ([
-      !Mechanologist(c),
-      !Ranger(c),
-      !Necromancer(c),
-      c.types.includes('Pirate')
-    ].every(Boolean))
-
-    return {
-      equipment: acc.equipment + ((Common(card) && Equipment(card)) ? 1 : 0),
-      generic: acc.generic + ((Common(card) && Generic(card) && NonEquipment(card)) ? 1 : 0),
-      mechanologist: acc.mechanologist + ((Common(card) && Mechanologist(card) && NonEquipment(card)) ? 1 : 0),
-      ranger: acc.ranger + ((Common(card) && Ranger(card) && NonEquipment(card)) ? 1 : 0),
-      necromancer: acc.necromancer + ((Common(card) && Necromancer(card) && NonEquipment(card)) ? 1 : 0),
-      pirate: acc.pirate + ((Common(card) && Pirate(card) && NonEquipment(card)) ? 1 : 0),
-    }
-  }, {
-    equipment: 0,
-    generic: 0,
-    mechanologist: 0,
-    ranger: 0,
-    necromancer: 0,
-    pirate: 0,
-  })
-
-  const data = [
-    { value: counts.equipment, color: 'var(--mantine-color-gray-5)', name: 'Equipment' },
-    { value: counts.generic, color: 'var(--mantine-color-yellow-3)', name: 'Generic' },
-    { value: counts.pirate, color: 'var(--mantine-color-cyan-5)', name: 'Pirate' },
-    { value: counts.ranger, color: 'var(--mantine-color-green-9)', name: 'Ranger' },
-    { value: counts.mechanologist, color: 'var(--mantine-color-orange-6)', name: 'Mechanologist' },
-    { value: counts.necromancer, color: 'var(--mantine-color-teal-5)', name: 'Necromancer' },
-  ]
-
-  const breakdown = [
-    { value: counts.equipment, color: 'var(--mantine-color-gray-5)', name: 'Equipment' },
-    { value: counts.generic + counts.pirate, color: 'var(--mantine-color-yellow-3)', name: 'Generic + Pirate' },
-    { value: counts.ranger + counts.mechanologist + counts.necromancer, color: 'var(--mantine-color-cyan-5)', name: 'Classes' },
-  ]
+  const counts = computeStats(pack.cards)
 
   return (
     <Stack>
-      <Title order={3}>Commons</Title>
+      <Title order={3}>By Class</Title>
       <Center>
-        <PieChart
-          startAngle={0}
-          endAngle={180}
-          withTooltip={false}
-          size={200}
-          data={data.toReversed()}
-          mb={-80}
-        />
+        <PackCommonsChart stats={counts}/>
       </Center>
-      <Paper withBorder>
-        {
-          data.map((d) => (
-            <>
-            <Group p='sm' justify="space-between" w='100%'>
-              <Group >
-              <ColorSwatch color={d.color}>
-                <Text c='black'>{d.name[0]}</Text>
-              </ColorSwatch>
-              <Text>{d.name}</Text>
-              </Group>
-              <Text size="lg" fw={600}>{d.value}</Text>
-            </Group>
-            <Divider />
-            </>
-          ))
-        }
-      </Paper>
+      <PackCommonsTable stats={counts} />
       <Title order={3}>Pack Structure</Title>
       <Center>
-        <PieChart data={breakdown} />
+        <PackBreakdownChart stats={counts} />
       </Center>
-        <Paper withBorder>
-        {
-          breakdown.map((d) => (
-            <>
-            <Group p='sm' justify="space-between" w='100%'>
-              <Group >
-              <ColorSwatch color={d.color}>
-                <Text c='black'>{d.name[0]}</Text>
-              </ColorSwatch>
-              <Text>{d.name}</Text>
-              </Group>
-              <Text size="lg" fw={600}>{d.value}</Text>
-            </Group>
-            <Divider />
-            </>
-          ))
-        }
-        </Paper>
+      <PackBreakdownTable stats={counts} />
+
+      <Space h='xl'/>
     </Stack>
   )
 }
