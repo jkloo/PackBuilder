@@ -185,7 +185,7 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
       </Group>
     </Modal>
     
-    <Modal opened={showImport} onClose={()=>setShowImport(false)} centered title='Import Packs'>
+    <Modal size='xl' opened={showImport} onClose={()=>setShowImport(false)} centered title='Import Packs'>
       <ImportModal onComplete={()=>setShowImport(false)}/>
     </Modal>
     </>
@@ -214,6 +214,7 @@ function ImportModal(props: ImportModelProps) {
   }
 
   return (
+    <Container>
     <Stack>
     <Alert variant="light" color="red" title="Dangerous Territory" icon={<IconInfoCircle />}>
       This import has no validation on it and is going to dump the JSON data directly into your browser's localStorage.
@@ -241,7 +242,7 @@ function ImportModal(props: ImportModelProps) {
 
         <div>
           <Text size="xl" inline>
-            Drag images here or click to select files
+            Drag a JSON here or click to select a file
           </Text>
           <Text size="sm" c="dimmed" inline mt={7}>
             Attach as many files as you like, each file should not exceed 5mb
@@ -250,6 +251,7 @@ function ImportModal(props: ImportModelProps) {
       </Group>
     </Dropzone>
     </Stack>
+    </Container>
   )
 }
 
