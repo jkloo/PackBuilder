@@ -125,11 +125,7 @@ export function CardTable({cards}: {cards:CardModel[]}) {
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
     </ScrollArea>
-    <Modal opened={!!toDelete} onClose={()=>{
-      setToDelete(undefined)
-    }} centered title={
-      <Title order={3}>Confirm Delete</Title>
-    }>
+    <Modal opened={!!toDelete} onClose={()=>setToDelete(undefined)} centered title='Confirm Delete'>
       <Group mt="xl" justify='flex-end'>
         <Button variant='default' onClick={()=>{setToDelete(undefined)}}>Cancel</Button>
         <Button color='red' onClick={() => {handleDelete(toDelete![0], toDelete![1])}}>Delete</Button>

@@ -8,6 +8,7 @@ export interface PackDatabaseSlice {
   upsert(cards: CardModel[], props: { packId?: PackModel['id'], boxId?: string }): void
   delete(pack: PackModel): void
   clearDatabase(): void
+  importDatabase(packs: PackModel[]): void
 }
 
 export const usePackDatabaseSlice: StateCreator<Store, [], [], PackDatabaseSlice> = (set, get, store) => ({
@@ -43,4 +44,17 @@ export const usePackDatabaseSlice: StateCreator<Store, [], [], PackDatabaseSlice
     }
   }),
   clearDatabase: () => set((state) => ({ packDatabase: new Map() })),
+  importDatabase: (packs: PackModel[]) => set((state) => {
+    const importing = new Map(
+      packs.map((pack) => [pack.id, pack])
+    )
+    const packDatabase = new Map(
+      [
+        ...state.packDatabase,
+        ...importing
+      ]
+    )
+
+    return { packDatabase }
+  }),
 })

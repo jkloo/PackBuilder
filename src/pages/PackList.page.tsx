@@ -3,8 +3,9 @@ import { PackBreakdownChart, PackBreakdownTable, PackCommonsChart, PackCommonsTa
 import { PackModel } from "@/Models/Pack.model";
 import { computeAverages } from "@/Models/PackStats.model";
 import { useAppStore } from "@/Store/store";
-import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space, Stack, Center, Paper, Modal, List } from "@mantine/core";
-import { IconBox, IconCards, IconDownload, IconEdit, IconPlus, IconTrash, IconUpload } from "@tabler/icons-react";
+import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space, Stack, Center, Paper, Modal, List, Alert } from "@mantine/core";
+import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { IconBox, IconBraces, IconCards, IconDownload, IconEdit, IconInfoCircle, IconPlus, IconTrash, IconUpload, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -15,6 +16,7 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
   const deletePack = useAppStore((state) => state.delete)
 
   const [toDelete, setToDelete] = useState(undefined as PackModel|undefined)
+  const [showImport, setShowImport] = useState(false)
 
   const confirmDelete = (pack: PackModel) => {
     setToDelete(pack)
@@ -50,14 +52,14 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
     })
   }
 
-  const handleImport= () => {
-
+  const handleImport = () => {
+    setShowImport(true)
   }
 
   const rows = packs.map((pack, index) => {
     return (
       <Table.Tr key={pack.id}>
-        <Table.Td>{pack.cards.length}</Table.Td>
+        <Table.Td>{index + 1}</Table.Td>
         <Table.Td>
           <Button onClick={() => navigate(`/packs/${pack.id}`)} variant='default'>
             <Group gap="sm" >
@@ -123,7 +125,7 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
           <Table miw={640} verticalSpacing="sm">
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>Card Count</Table.Th>
+                <Table.Th></Table.Th>
                 <Table.Th>Pack Id</Table.Th>
                 <Table.Th>Box Id</Table.Th>
                 <Table.Th></Table.Th>
@@ -148,11 +150,7 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
     </AppShell.Aside>
 
     
-    <Modal opened={!!toDelete} onClose={()=>{
-      setToDelete(undefined)
-    }} centered title={
-      <Title order={3}>Confirm Delete</Title>
-    }>
+    <Modal opened={!!toDelete} onClose={()=>setToDelete(undefined)} centered title='Confirm Delete'>
       { toDelete 
         ? <Group justify="space-between">
           <List p='md'>
@@ -186,8 +184,73 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
         <Button color='red' onClick={() => {handleDelete(toDelete!)}}>Delete</Button>
       </Group>
     </Modal>
+    
+    <Modal opened={showImport} onClose={()=>setShowImport(false)} centered title='Import Packs'>
+      <ImportModal onComplete={()=>setShowImport(false)}/>
+    </Modal>
     </>
   );
+}
+
+interface ImportModelProps extends Partial<DropzoneProps> {
+  onComplete(): void
+}
+
+function ImportModal(props: ImportModelProps) {
+  const [loading, setLoading] = useState(false)
+  const importPacks = useAppStore((state) => state.importDatabase)
+
+  const accept = (file: File) => {
+    const load = async (file: File) => {
+      setLoading(true)
+      const text = await file.text()
+      let packs = JSON.parse(text) as PackModel[]
+      importPacks(packs)
+      setLoading(false)
+      props.onComplete()
+    }
+
+    load(file)
+  }
+
+  return (
+    <Stack>
+    <Alert variant="light" color="red" title="Dangerous Territory" icon={<IconInfoCircle />}>
+      This import has no validation on it and is going to dump the JSON data directly into your browser's localStorage.
+      If the format of your import file is incorrect, this may lead to unexpected results.
+    </Alert>
+      <Dropzone
+      onDrop={(files) => accept(files[0])}
+      onReject={(files) => console.log('rejected files', files)}
+      maxSize={5 * 1024 ** 2}
+      accept={['application/json']}
+      maxFiles={1}
+      loading={loading}
+      {...props}
+    >
+      <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+        <Dropzone.Accept>
+          <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+        </Dropzone.Accept>
+        <Dropzone.Reject>
+          <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+        </Dropzone.Reject>
+        <Dropzone.Idle>
+          <IconBraces size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+        </Dropzone.Idle>
+
+        <div>
+          <Text size="xl" inline>
+            Drag images here or click to select files
+          </Text>
+          <Text size="sm" c="dimmed" inline mt={7}>
+            Attach as many files as you like, each file should not exceed 5mb
+          </Text>
+        </div>
+      </Group>
+    </Dropzone>
+    </Stack>
+  )
 }
 
 function StatsSection({packs}:{packs: PackModel[]}) {

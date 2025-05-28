@@ -211,7 +211,6 @@ export function PackBuilderToolbar() {
     </Group>
     <Modal opened={showCancelConfirm} onClose={() => setShowCancelConfirm(false)} title={packId ? 'Cancel changes' : 'Discard pack'} centered>
       <Text>Are you sure you want to cancel your changes to this pack? Your changes will be lost forever!</Text>
-
       <Group mt="xl" justify='flex-end'>
         <Button variant='default' onClick={()=> setShowCancelConfirm(false)}>Stay here</Button>
         <Button color='red' onClick={handleCancel}>I'm sure</Button>
