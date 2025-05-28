@@ -1,14 +1,28 @@
 import { CardSearch } from "@/components/CardSearch/CardSearch";
 import { CardTable } from "@/components/CardTable/CardTable";
 import { useAppStore } from "@/Store/store";
-import { AppShell, Button, Container, Group, Input, List, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
-import { IconBox, IconCards, IconCircle, IconCircleCheckFilled } from "@tabler/icons-react";
+import { AppShell, Button, Container, Group, Input, List, Modal, Stack, Text, TextInput, Title, Tooltip } from "@mantine/core";
+import { IconBox, IconCards, IconCheck, IconCircle, IconCircleCheckFilled, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { notifications } from '@mantine/notifications';
+import { CardModel } from "@/Models/Card.model";
 
 export function PackBuilder() { 
   const packCards = useAppStore((state) => state.packBuilderCards)
   const addCard = useAppStore((state) => state.add)
+
+  const handleAdd = (card: CardModel) => {
+    addCard(card)
+    notifications.show({
+      position: 'bottom-left',
+      color: 'teal',
+      title: 'Card added',
+      message: `${card.name} (${card.id})`,
+      icon: <IconPlus size={18} />,
+      autoClose: 1500
+    });
+  }
   
   return (
     <AppShell.Main>
@@ -16,7 +30,7 @@ export function PackBuilder() {
     <Stack>
       <Title>Pack Builder</Title>
       <PackBuilderToolbar/>  
-      <CardSearch set="SEA" onSelect={addCard}/>
+      <CardSearch set="SEA" onSelect={handleAdd}/>
       <CardTable cards={packCards}/>
     </Stack>
     </Container>
@@ -97,6 +111,7 @@ function PackInput({value, setValue}: { value?: string, setValue(value?: string)
 }
 
 export function PackBuilderToolbar() {
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [saveDisabled, setSaveDisabled] = useState(false)
   const [validations, setValidations] = useState([false, false, false])
 
@@ -130,12 +145,31 @@ export function PackBuilderToolbar() {
     console.log('Presave Box ID -', boxId)
     savePack(packCards, { packId, boxId })
     clear(false)
+    
     if (packId) { navigate(-1) }
+    notifications.show({
+      id: 'pack-save',
+      position: 'bottom-center',
+      color: 'teal',
+      title: 'Pack saved',
+      message: 'Your cards are safe and sound.',
+      icon: <IconCheck size={18} />,
+      autoClose: 2000,
+    });
   }
   
   const handleCancel = () => {
     clear(true)
     navigate(-1)
+    setShowCancelConfirm(false)
+  }
+
+  const confirmCancel = () => {
+    if (packCards.length == 0) {
+      handleCancel()
+    } else {
+      setShowCancelConfirm(true)
+    }
   }
 
   const requirementIcon = (satisfied: boolean) => {
@@ -147,6 +181,7 @@ export function PackBuilderToolbar() {
   }
 
   return (
+    <>
     <Group justify="space-between">
       <Group>
         <BoxInput value={boxId} setValue={setBoxId}/>
@@ -171,9 +206,18 @@ export function PackBuilderToolbar() {
           <Button disabled={saveDisabled} onClick={handleSave}>Save</Button>
 
         </Tooltip>
-        <Button variant="default" color="red" onClick={handleCancel}>Cancel</Button>
+        <Button variant="default" color="red" onClick={confirmCancel}>Cancel</Button>
       </Group>
     </Group>
+    <Modal opened={showCancelConfirm} onClose={() => setShowCancelConfirm(false)} title={packId ? 'Cancel changes' : 'Discard pack'} centered>
+      <Text>Are you sure you want to cancel your changes to this pack? Your changes will be lost forever!</Text>
+
+      <Group mt="xl" justify='flex-end'>
+        <Button variant='default' onClick={()=> setShowCancelConfirm(false)}>Stay here</Button>
+        <Button color='red' onClick={handleCancel}>I'm sure</Button>
+      </Group>
+    </Modal>
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
-import { Button, Group, Image, Menu, Popover, ScrollArea, Stack, Table, Text } from '@mantine/core';
+import { Button, Group, Image, Menu, Modal, Popover, ScrollArea, Stack, Table, Text, Title } from '@mantine/core';
 import { CardModel } from '@/Models/Card.model';
-import { PitchIndicator } from '@/components/PitchIndicator/PitchIndicator';
+import { colorForPitch, PitchIndicator } from '@/components/PitchIndicator/PitchIndicator';
 import { FoilingIndicator } from '../FoilingIndicator/FoilingIndicator';
 import { useCardAlternatives } from '@/Store/packBuilder';
 import { useAppStore } from '@/Store/store';
@@ -8,6 +8,8 @@ import { RarityIndicator } from '../RarityIndicator/RarityIndicator';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconTrash } from '@tabler/icons-react';
 import { CardImage } from '../CardImage/CardImage';
+import { useState } from 'react';
+import { notifications } from '@mantine/notifications';
 
 const keyForCard = (card: CardModel, index: number) => (`${index}-${card.printing_unique_id}`)
 
@@ -47,12 +49,23 @@ export function CardTable({cards}: {cards:CardModel[]}) {
   // const [selection, setSelection] = useState([] as string[]);
   // const toggleRow = (id: string) => setSelection((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id] );
   // const toggleAll = () => setSelection((current) => (current.length === cards.length ? [] : cards.map((item) => item.printing_unique_id)));
+  const [toDelete, setToDelete] = useState(undefined as [CardModel, number]|undefined)
 
   const replace = useAppStore((state) => state.replace)
   const remove = useAppStore((state) => state.remove)
 
+  const confirmDelete = (card: CardModel, index: number) => {
+    setToDelete([card, index])
+  }
+
   const handleDelete = (card: CardModel, index: number) => {
     remove(index)
+    setToDelete(undefined)
+    notifications.show({
+      color: 'red',
+      title: 'Card removed',
+      message: `${card.name} (${card.id})`,
+    })
   }
 
   const rows = cards.map((item, index) => {
@@ -95,6 +108,7 @@ export function CardTable({cards}: {cards:CardModel[]}) {
   });
 
   return (
+    <>
     <ScrollArea>
       <Table miw={640} verticalSpacing="sm">
         <Table.Thead>
@@ -111,6 +125,17 @@ export function CardTable({cards}: {cards:CardModel[]}) {
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
     </ScrollArea>
+    <Modal opened={!!toDelete} onClose={()=>{
+      setToDelete(undefined)
+    }} centered title={
+      <Title order={3}>Confirm Delete</Title>
+    }>
+      <Group mt="xl" justify='flex-end'>
+        <Button variant='default' onClick={()=>{setToDelete(undefined)}}>Cancel</Button>
+        <Button color='red' onClick={() => {handleDelete(toDelete![0], toDelete![1])}}>Delete</Button>
+      </Group>
+    </Modal>
+    </>
   );
 }
 

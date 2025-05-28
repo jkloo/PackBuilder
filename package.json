@@ -22,7 +22,9 @@
   "dependencies": {
     "@mantine/charts": "^8.0.1",
     "@mantine/core": "8.0.1",
+    "@mantine/dropzone": "^8.0.1",
     "@mantine/hooks": "8.0.1",
+    "@mantine/notifications": "8.0.1",
     "@tabler/icons-react": "^3.33.0",
     "immer": "^10.1.1",
     "nanoid": "^5.1.5",

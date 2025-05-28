@@ -1,9 +1,11 @@
+import { colorForPitch } from "@/components/PitchIndicator/PitchIndicator";
 import { PackBreakdownChart, PackBreakdownTable, PackCommonsChart, PackCommonsTable } from "@/components/Stats/Stats";
 import { PackModel } from "@/Models/Pack.model";
 import { computeAverages } from "@/Models/PackStats.model";
 import { useAppStore } from "@/Store/store";
-import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space, Stack, Center, Paper } from "@mantine/core";
-import { IconBox, IconCards, IconDownload, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { AppShell, Button, Container, Group, ScrollArea, Table, Title, Text, Space, Stack, Center, Paper, Modal, List } from "@mantine/core";
+import { IconBox, IconCards, IconDownload, IconEdit, IconPlus, IconTrash, IconUpload } from "@tabler/icons-react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: string}) {
@@ -12,8 +14,15 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
 
   const deletePack = useAppStore((state) => state.delete)
 
+  const [toDelete, setToDelete] = useState(undefined as PackModel|undefined)
+
+  const confirmDelete = (pack: PackModel) => {
+    setToDelete(pack)
+  }
+
   const handleDelete = (pack: PackModel) => {
     deletePack(pack)
+    setToDelete(undefined)
   }
 
   const downloadFile = ({ data, fileName, fileType }: { data:string, fileName:string, fileType:string }) => {
@@ -41,6 +50,10 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
     })
   }
 
+  const handleImport= () => {
+
+  }
+
   const rows = packs.map((pack, index) => {
     return (
       <Table.Tr key={pack.id}>
@@ -64,7 +77,7 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
         </Table.Td>
         <Table.Td>
           <Group justify='right'>
-            <Button variant="light" color="red" onClick={() => handleDelete(pack)}>
+            <Button variant="light" color="red" onClick={() => confirmDelete(pack)}>
               <IconTrash size={24} stroke={1.5}/>
             </Button>
             <Button variant="light" onClick={() => navigate(`/packs/${pack.id}/edit`)}>
@@ -82,11 +95,21 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
       <Container>
         <Title>{boxId ? `Packs in Box (${boxId})` : 'Packs' }</Title>
         <Group justify="flex-end">
-          <Button onClick={() => handleDownload()} variant='outline'>
-            <Group gap='xs'>
-              <IconDownload size={16}/>
-              <Text>Download</Text>
-            </Group>
+          <Button
+            onClick={() => handleImport()}
+            variant='outline'
+            leftSection={
+              <IconUpload size={16}/>
+            }
+          >
+            <Text>Import</Text>
+          </Button>
+          <Button
+            onClick={() => handleDownload()}
+            leftSection={<IconDownload size={16}/>}
+            variant='outline'>
+              
+            <Text>Download</Text>
           </Button>
           <Button onClick={() => navigate(boxId ? `/packs/new?boxId=${boxId}` : '/packs/new')}>
             <Group gap='xs'>
@@ -123,6 +146,46 @@ export function PackList({packs, boxId=undefined}: {packs: PackModel[], boxId?: 
         </Stack>
       </ScrollArea>
     </AppShell.Aside>
+
+    
+    <Modal opened={!!toDelete} onClose={()=>{
+      setToDelete(undefined)
+    }} centered title={
+      <Title order={3}>Confirm Delete</Title>
+    }>
+      { toDelete 
+        ? <Group justify="space-between">
+          <List p='md'>
+          {
+            toDelete!.cards.slice(0, 7).map((card, index) => (
+              <List.Item key={`${card.printing_unique_id}-${index}`}>
+                <Text c={colorForPitch(card.pitch)}>
+                  {card.name}
+                </Text>
+              </List.Item>
+            ))
+          }
+        </List>
+        <List p='md'>
+          {
+            toDelete!.cards.slice(7).map((card, index) => (
+              <List.Item key={`${card.printing_unique_id}-${index}`}>
+                <Text c={colorForPitch(card.pitch)}>
+                  {card.name}
+                </Text>
+              </List.Item>
+            ))
+          }
+          
+        </List>
+        </Group>
+        : undefined
+      }
+      <Group mt="xl" justify='flex-end'>
+        <Button variant='default' onClick={()=>{setToDelete(undefined)}}>Cancel</Button>
+        <Button color='red' onClick={() => {handleDelete(toDelete!)}}>Delete</Button>
+      </Group>
+    </Modal>
     </>
   );
 }
